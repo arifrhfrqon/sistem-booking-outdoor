@@ -17,8 +17,7 @@ return new class extends Migration
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');
             $table->integer('jumlah');
-            $table->decimal('total_harga', 10, 2); // untuk struk cetak
-            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            $table->decimal('total_harga', 10, 2);
             $table->timestamps();
         });
     }

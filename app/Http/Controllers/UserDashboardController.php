@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -10,10 +11,10 @@ class UserDashboardController extends Controller
     // tampilkan dashboard user
     public function index()
     {
-        return view('user.index');
+        $barang = Barang::all();
+        return view('user.index', compact('barang'));
     }
 
-    // tampilkan booking milik user yang sedang login
     public function myBooking()
     {
         $user = Auth::user();
@@ -22,4 +23,11 @@ class UserDashboardController extends Controller
         
         return view('user.my-booking', compact('bookings'));
     }
+
+    public function show($id)
+    {
+        $barang = Barang::findOrFail($id);
+        return view('user.detail-barang', compact('barang'));
+    }
+
 }
