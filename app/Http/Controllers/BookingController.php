@@ -8,6 +8,7 @@ use App\Models\Barang;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
+
 class BookingController extends Controller
 {
     public function store(Request $request)
@@ -20,6 +21,7 @@ class BookingController extends Controller
         ]);
 
         $barang = Barang::findOrFail($request->barang_id);
+        $user   = Auth::user();
 
         // hitung lama hari
         $lamaHari = (new \DateTime($request->tanggal_pinjam))
@@ -29,14 +31,18 @@ class BookingController extends Controller
         // hitung total harga
         $total = $barang->harga_per_hari * $request->jumlah * $lamaHari;
 
-        Booking::create([
-            'user_id' => Auth::id(),
-            'barang_id' => $request->barang_id,
-            'tanggal_pinjam' => $request->tanggal_pinjam,
-            'tanggal_kembali' => $request->tanggal_kembali,
-            'jumlah' => $request->jumlah,
-            'total_harga' => $total,
-        ]);
+    Booking::create([
+        'user_id'        => $user->id,
+        'barang_id'      => $request->barang_id,
+        'tanggal_pinjam' => $request->tanggal_pinjam,
+        'tanggal_kembali'=> $request->tanggal_kembali,
+        'jumlah'         => $request->jumlah,
+        'total_harga'    => $total,
+        'nama'           => $user->nama_lengkap,  // ambil dari users
+        'nik'            => $user->nik,
+        'alamat'         => $user->alamat,
+        'no_hp'          => $user->no_hp,
+    ]);
 
         return redirect()->back()->with('success', 'Booking berhasil! Silakan cek di menu Booking.');
     }
@@ -44,7 +50,11 @@ class BookingController extends Controller
     public function show($id)
     {
         $booking = Booking::with('barang')->findOrFail($id);
-        return view('user.show', compact('booking'));
+
+        // --- Dummy QRIS String (biasanya dari API) ---
+        $qris_string = "00020101021126680016COM.QRIS.WWW01189360091100100205450230303UMI520454995303360540" . $booking->total_harga;
+
+        return view('user.show', compact('booking', 'qris_string'));
     }
 
     public function printAll()
@@ -55,12 +65,10 @@ class BookingController extends Controller
             return redirect()->back()->with('error', 'Tidak ada data booking untuk dicetak.');
         }
 
-        // Ambil status terakhir (misalnya dari booking terakhir)
         $status = $bookings->last()->status_pembayaran ?? 'Belum Dibayar';
 
         $pdf = Pdf::loadView('user.print', compact('bookings', 'status'))
-                    ->setPaper([0,0,226.77,600], 'portrait'); 
-                    // 80mm x panjang dinamis (cocok untuk struk)
+                  ->setPaper([0,0,226.77,600], 'portrait'); // 80mm struk
 
         return $pdf->stream('struk-booking.pdf');
     }

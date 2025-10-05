@@ -13,6 +13,11 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('nama');
+            $table->string('nik')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('no_hp')->nullable();
+            $table->text('keterangan')->nullable();
             $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');

@@ -76,11 +76,13 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Laporan:</h6>
-                        <a class="collapse-item" href="#">Laporan Peminjaman</a>
-                        <a class="collapse-item" href="#">Laporan Kehilangan</a>
+                        <a class="collapse-item" href="/laporanbooking">Laporan Booking</a>
+                        <a class="collapse-item" href="/kerusakan">Laporan Kerusakan</a>
                     </div>
                 </div>
             </li>
+
+
 
             <hr class="sidebar-divider d-none d-md-block">
 
