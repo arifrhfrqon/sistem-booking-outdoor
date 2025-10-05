@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class UserDashboardController extends Controller
 {
-    // tampilkan dashboard user
     public function index()
     {
         $barang = Barang::all();
@@ -18,16 +17,21 @@ class UserDashboardController extends Controller
     public function myBooking()
     {
         $user = Auth::user();
-        
-        $bookings = $user->bookings;  // relasi hasMany di model User
-        
+        $bookings = $user->bookings; 
+
         return view('user.my-booking', compact('bookings'));
     }
 
+    // detail barang
     public function show($id)
     {
         $barang = Barang::findOrFail($id);
         return view('user.detail-barang', compact('barang'));
     }
 
+    public function kategori($namaKategori)
+    {
+        $barang = Barang::where('kategori_barang', $namaKategori)->get();
+        return view('user.index', compact('barang', 'namaKategori'));
+    }
 }

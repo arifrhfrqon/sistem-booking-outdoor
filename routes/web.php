@@ -6,12 +6,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UserDashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -26,6 +25,10 @@ Route::middleware('auth')->group(function(){
     Route::resource('barang', BarangController::class);
     Route::resource('users', AdminController::class);
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::get('/laporanbooking', [LaporanController::class, 'booking'])->name('laporan.booking');
+    Route::get('/kerusakan', [LaporanController::class, 'kerusakan'])->name('laporan.kerusakan');
+    Route::put('/booking/{id}/konfirmasi', [LaporanController::class, 'konfirmasi'])
+    ->name('booking.konfirmasi');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -34,4 +37,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-booking', [UserDashboardController::class, 'myBooking'])->name('user.myBooking');
     Route::resource('booking', BookingController::class);
     Route::get('/print-all', [BookingController::class, 'printAll'])->name('booking.printAll');
+    Route::get('/about', function () {
+        return view('user.about');
+    });
+    Route::get('/baranguser', [UserDashboardController::class, 'index'])->name('barang.index');
+    Route::get('/baranguser/{id}', [UserDashboardController::class, 'show'])->name('barang.show');
+    Route::get('/baranguser/kategori/{namaKategori}', [UserDashboardController::class, 'kategori'])->name('barang.kategori');
 });

@@ -32,10 +32,6 @@
 
                         <!-- Product actions -->
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
-                            <!-- Tombol Detail -->
-                            <a href="{{ route('barang.show', $item->id) }}" class="btn btn-outline-primary btn-sm mb-2">
-                                <i class="bi bi-eye"></i> Lihat Detail
-                            </a>
 
                             <!-- Tombol Booking Cepat -->
                             <!-- Tombol Booking Cepat -->
@@ -56,11 +52,21 @@
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label for="tanggal_pinjam{{ $item->id }}" class="form-label">Tanggal Pinjam</label>
-                                                <input type="date" name="tanggal_pinjam" id="tanggal_pinjam{{ $item->id }}" class="form-control" required>
+                                                <input type="date" 
+                                                    name="tanggal_pinjam" 
+                                                    id="tanggal_pinjam{{ $item->id }}" 
+                                                    class="form-control" 
+                                                    required 
+                                                    min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="tanggal_kembali{{ $item->id }}" class="form-label">Tanggal Kembali</label>
-                                                <input type="date" name="tanggal_kembali" id="tanggal_kembali{{ $item->id }}" class="form-control" required>
+                                                <input type="date" 
+                                                    name="tanggal_kembali" 
+                                                    id="tanggal_kembali{{ $item->id }}" 
+                                                    class="form-control" 
+                                                    required 
+                                                    min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="jumlah{{ $item->id }}" class="form-label">Jumlah</label>
@@ -72,6 +78,7 @@
                                             <button type="submit" class="btn btn-success">Booking</button>
                                         </div>
                                     </form>
+
                                     </div>
                                 </div>
                             </div>

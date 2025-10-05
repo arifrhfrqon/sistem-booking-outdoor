@@ -73,14 +73,6 @@
         </p>
     </div>
 
-    @if($status !== 'Lunas')
-        <div class="line"></div>
-        <div class="qris">
-            <p>Scan QRIS untuk pembayaran:</p>
-            {!! QrCode::size(100)->generate("PAYMENT-RENTTRAIL-USER-" . auth()->id() . "-TOTAL-" . $grandTotal) !!}
-        </div>
-    @endif
-
     <div class="line"></div>
 
     <div class="footer">
