@@ -39,9 +39,6 @@
                         <a href="{{ route('booking.show', $booking->id) }}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{{ route('booking.edit', $booking->id) }}" class="btn btn-warning btn-sm">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
                         <form action="{{ route('booking.destroy', $booking->id) }}" method="POST" class="d-inline"
                               onsubmit="return confirm('Yakin ingin membatalkan booking ini?')">
                             @csrf

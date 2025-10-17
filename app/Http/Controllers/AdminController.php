@@ -11,7 +11,11 @@ class AdminController extends Controller
 {
     public function admin()
     {
-        return view('admin.dashboard');
+        $totalBarang   = \App\Models\Barang::count();
+        $totalBooking  = \App\Models\Booking::count();
+        $bookingAktif  = \App\Models\Booking::where('status_pembayaran', 'Belum')->count();
+        $totalUser     = \App\Models\User::count();
+        return view('admin.dashboard', compact('totalBarang', 'totalBooking', 'bookingAktif', 'totalUser'));
     }
 
     public function index()
@@ -126,4 +130,5 @@ class AdminController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success','User berhasil dihapus.');
     }
+
 }

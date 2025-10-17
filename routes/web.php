@@ -40,7 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/about', function () {
         return view('user.about');
     });
-    Route::get('/baranguser', [UserDashboardController::class, 'index'])->name('barang.index');
-    Route::get('/baranguser/{id}', [UserDashboardController::class, 'show'])->name('barang.show');
-    Route::get('/baranguser/kategori/{namaKategori}', [UserDashboardController::class, 'kategori'])->name('barang.kategori');
+    Route::get('/baranguser', [UserDashboardController::class, 'index'])->name('user.barang.index');
+    Route::get('/baranguser/{id}', [UserDashboardController::class, 'show'])->name('user.barang.show');
+    Route::get('/baranguser/kategori/{namaKategori}', [UserDashboardController::class, 'kategori'])->name('user.barang.kategori');
 });

@@ -10,15 +10,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Barang</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ route('barang.index') }}">Semua Barang</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.index') }}">Semua Barang</a></li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><h9 class="nav-link">Kategori:</h9></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Tenda') }}">Tenda</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Tas') }}">Tas</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Sepatu') }}">Sepatu</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Pakaian') }}">Pakaian</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Perlengkapan Tidur') }}">Perlengkapan Tidur</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Peralatan Masak') }}">Peralatan Masak</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Tenda') }}">Tenda</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Tas') }}">Tas</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Sepatu') }}">Sepatu</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Pakaian') }}">Pakaian</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Perlengkapan Tidur') }}">Perlengkapan Tidur</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Peralatan Masak') }}">Peralatan Masak</a></li>
                             </ul>
                         </li>
                     </ul>

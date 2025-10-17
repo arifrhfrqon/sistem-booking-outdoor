@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>RentTrail - Sistem Booking Alat Outdoor</title>
+        <title>Bolodewe Adventure</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
@@ -14,7 +14,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">RentTrail</a>
+                <a class="navbar-brand" href="#!">Bolodewe Adventure</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -23,15 +23,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Barang</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ route('barang.index') }}">Semua Barang</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.index') }}">Semua Barang</a></li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><h9 class="nav-link">Kategori:</h9></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Tenda') }}">Tenda</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Tas') }}">Tas</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Sepatu') }}">Sepatu</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Pakaian') }}">Pakaian</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Perlengkapan Tidur') }}">Perlengkapan Tidur</a></li>
-                                <li><a class="dropdown-item" href="{{ route('barang.kategori', 'Peralatan Masak') }}">Peralatan Masak</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Tenda') }}">Tenda</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Tas') }}">Tas</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Sepatu') }}">Sepatu</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Pakaian') }}">Pakaian</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Perlengkapan Tidur') }}">Perlengkapan Tidur</a></li>
+                                <li><a class="dropdown-item" href="{{ route('user.barang.kategori', 'Peralatan Masak') }}">Peralatan Masak</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -106,8 +106,8 @@
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Rental Barang Outdoor</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Alam Pasti Akan Menunggu Kedatanganmu</p>
+                    <h1 class="display-4 fw-bolder">Bolodewe Adventure</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">"Karena setiap langkah menuju alam bebas dimulai dari persiapan yang matang. Dapatkan perlengkapan outdoor terbaik dari kami — mudah disewa, siap dipakai, dan mendukung petualanganmu hingga ke puncak."</p>
                 </div>
             </div>
         </header>
@@ -140,7 +140,7 @@
 
         <!-- Footer-->
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; RentTrail - Sistem Booking Alat Outdoor</p></div>
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Bolodewe Adventure</p></div>
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
