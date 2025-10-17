@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Barang;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,8 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('welcome');
+        $barang = Barang::all();
+        return view('welcome', compact('barang'));
     }
 
     public function login(Request $request)

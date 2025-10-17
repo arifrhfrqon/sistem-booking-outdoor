@@ -73,4 +73,48 @@ class BookingController extends Controller
         return $pdf->stream('struk-booking.pdf');
     }
 
+    public function destroy($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->delete();
+
+        return redirect()->route('user.myBooking')->with('success', 'Data booking berhasil dihapus.');
+    }
+
+    public function edit($id)
+    {
+        $booking = Booking::with('barang')->findOrFail($id);
+        $barangs = Barang::all();
+        return view('user.edit-booking', compact('booking', 'barangs'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_pinjam' => 'required|date|after_or_equal:today',
+            'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
+        $booking = Booking::findOrFail($id);
+        $barang  = Barang::findOrFail($booking->barang_id);
+
+        $lamaHari = (new \DateTime($request->tanggal_pinjam))
+            ->diff(new \DateTime($request->tanggal_kembali))
+            ->days;
+
+        $total = $barang->harga_per_hari * $request->jumlah * $lamaHari;
+
+        $booking->update([
+            'tanggal_pinjam' => $request->tanggal_pinjam,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'jumlah' => $request->jumlah,
+            'total_harga' => $total,
+        ]);
+
+        return redirect()->route('user.myBooking')->with('success', 'Data booking berhasil diperbarui.');
+    }
+
+
+
 }

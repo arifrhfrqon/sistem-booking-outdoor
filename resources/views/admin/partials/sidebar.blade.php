@@ -77,7 +77,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Laporan:</h6>
                         <a class="collapse-item" href="/laporanbooking">Laporan Booking</a>
-                        <a class="collapse-item" href="/kerusakan">Laporan Kerusakan</a>
                     </div>
                 </div>
             </li>
