@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Barang;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +20,20 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalBarang', 'totalBooking', 'bookingAktif', 'totalUser'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.user.index', compact('users'));
+        $query = $request->get('query');
+
+        $users = \App\Models\User::when($query, function ($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")
+            ->orWhere('email', 'like', "%{$query}%")
+            ->orWhere('nama_lengkap', 'like', "%{$query}%")
+            ->orWhere('nik', 'like', "%{$query}%")
+            ->orWhere('no_hp', 'like', "%{$query}%")
+            ->orWhere('pekerjaan', 'like', "%{$query}%");
+        })->get();
+
+        return view('admin.user.index', compact('users', 'query'));
     }
 
     public function profile()
@@ -129,6 +141,33 @@ class AdminController extends Controller
     {
         $user->delete();
         return redirect()->route('users.index')->with('success','User berhasil dihapus.');
+    }
+
+    public function liveSearch(Request $request)
+    {
+        $query = $request->get('query', '');
+        if (!$query) return response()->json([]);
+
+        $users = \App\Models\User::where('name', 'like', "%{$query}%")->take(5)->get(['id', 'name']);
+        $barangs = \App\Models\Barang::where('nama_barang', 'like', "%{$query}%")->take(5)->get(['id', 'nama_barang']);
+        $bookings = Booking::with(['user', 'barang'])
+        ->when($query, function ($q) use ($query) {
+            $q->whereHas('user', function ($u) use ($query) {
+                $u->where('name', 'like', "%{$query}%")
+                ->orWhere('nama_lengkap', 'like', "%{$query}%")
+                ->orWhere('no_hp', 'like', "%{$query}%");
+            })
+            ->orWhereHas('barang', function ($b) use ($query) {
+                $b->where('nama_barang', 'like', "%{$query}%");
+            });
+        })
+        ->get();
+
+        return response()->json([
+            'users' => $users,
+            'barangs' => $barangs,
+            'bookings' => $bookings,
+        ]);
     }
 
 }

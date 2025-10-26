@@ -8,29 +8,27 @@ use App\Models\Kerusakan;
 
 class LaporanController extends Controller
 {
-    // laporan booking
-    public function booking()
+    public function booking(Request $request)
     {
-        $bookings = Booking::with('barang','user')->latest()->get();
-        return view('admin.laporan.booking', compact('bookings'));
-    }
+        $query = $request->get('query');
 
-    // laporan kerusakan
-    public function kerusakan()
-    {
-        $kerusakan = Kerusakan::with('barang','user')->latest()->get();
-        return view('admin.laporan.kerusakan', compact('kerusakan'));
-    }
+        $bookings = Booking::with(['user', 'barang'])
+            ->when($query, function ($q) use ($query) {
+                $q->whereHas('user', function ($u) use ($query) {
+                    $u->where('name', 'like', "%{$query}%")
+                    ->orWhere('nama_lengkap', 'like', "%{$query}%")
+                    ->orWhere('nik', 'like', "%{$query}%")
+                    ->orWhere('no_hp', 'like', "%{$query}%");
+                })
+                ->orWhereHas('barang', function ($b) use ($query) {
+                    $b->where('nama_barang', 'like', "%{$query}%");
+                })
+                ->orWhere('status_pembayaran', 'like', "%{$query}%")
+                ->orWhere('keterangan', 'like', "%{$query}%");
+            })
+            ->get();
 
-    public function konfirmasi(Request $request, $id)
-    {
-        $booking = Booking::findOrFail($id);
-        $booking->status_pembayaran = 'Lunas';
-        $booking->keterangan = $request->keterangan;
-        $booking->save();
-
-        return redirect()->route('laporan.booking')
-            ->with('success', 'Pembayaran berhasil dikonfirmasi sebagai Lunas.');
+        return view('admin.laporan.booking', compact('bookings', 'query'));
     }
 
 }

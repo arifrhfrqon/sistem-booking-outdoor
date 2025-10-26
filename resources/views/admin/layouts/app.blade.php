@@ -18,6 +18,7 @@
     <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.css') }}" rel="stylesheet">
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+
 </head>
 
 
@@ -45,19 +46,30 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form id="admin-search-form"
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                        style="position: relative;">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text" id="admin-search-input"
+                                class="form-control bg-light border-0 small"
+                                placeholder="Cari di seluruh sistem..."
+                                aria-label="Search">
+
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
                         </div>
+
+                        <!-- hasil live search -->
+                        <div id="admin-search-results"
+                            class="bg-white border rounded shadow w-100"
+                            style="position: absolute; top: 100%; left: 0; z-index: 1050; display:none; max-height: 300px; overflow-y: auto;">
+                        </div>
                     </form>
 
+               
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -153,6 +165,85 @@
 
     <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('admin-search-input');
+    const results = document.getElementById('admin-search-results');
+
+    input.addEventListener('keyup', function() {
+        const query = this.value.trim();
+
+        if (query.length < 2) {
+            results.style.display = 'none';
+            results.innerHTML = '';
+            return;
+        }
+
+        fetch(`/admin/live-search?query=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                let html = '';
+                const highlight = (text) => {
+                    const pattern = new RegExp(`(${query})`, 'gi');
+                    return text.replace(pattern, '<mark style="background-color:#fff3cd;">$1</mark>');
+                };
+
+                if (!data.users.length && !data.barangs.length && !data.bookings.length) {
+                    html = `<p class="p-2 text-muted text-center mb-0">Tidak ada hasil</p>`;
+                } else {
+                    if (data.users.length) {
+                        html += `<div class="border-bottom p-2 fw-bold bg-light">👤 User</div>`;
+                        data.users.forEach(u => {
+                            html += `<div class="p-2 border-bottom">
+                                <a href="/users?query=${encodeURIComponent(query)}" 
+                                   class="text-dark text-decoration-none d-block">
+                                   ${highlight(u.name)}
+                                </a>
+                            </div>`;
+                        });
+                    }
+                    if (data.barangs.length) {
+                        html += `<div class="border-bottom p-2 fw-bold bg-light">📦 Barang</div>`;
+                        data.barangs.forEach(b => {
+                            html += `<div class="p-2 border-bottom">
+                                <a href="/barang?query=${encodeURIComponent(query)}" 
+                                   class="text-dark text-decoration-none d-block">
+                                   ${highlight(b.nama_barang)}
+                                </a>
+                            </div>`;
+                        });
+                    }
+                    if (data.bookings.length) {
+                        html += `<div class="border-bottom p-2 fw-bold bg-light">🧾 Booking</div>`;
+                        data.bookings.forEach(bk => {
+                            const userName = bk.user?.nama_lengkap || bk.user?.name || 'Tanpa Nama';
+                            const userPhone = bk.user?.no_hp || '-';
+                            const barangName = bk.barang?.nama_barang || '-';
+
+                            html += `<div class="p-2 border-bottom">
+                                <a href="/laporanbooking?query=${encodeURIComponent(query)}"
+                                class="text-dark text-decoration-none d-block">
+                                ${highlight(userName)} (${highlight(userPhone)}) - ${highlight(barangName)}
+                                </a>
+                            </div>`;
+                        });
+                    }
+                }
+
+                results.innerHTML = html;
+                results.style.display = 'block';
+            });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!results.contains(e.target) && e.target !== input) {
+            results.style.display = 'none';
+        }
+    });
+});
+</script>
+
 
 
 </body>

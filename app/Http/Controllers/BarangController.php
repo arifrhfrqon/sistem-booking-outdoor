@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
@@ -21,35 +23,47 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kategori_barang' => 'required',
-            'nama_barang'     => 'required',
-            'deskripsi'       => 'nullable',
-            'stok'            => 'required|integer',
-            'harga_per_hari'  => 'required|numeric',
-            'foto'            => 'nullable|image',
+            'barang_id'       => 'required|exists:barangs,id',
+            'tanggal_pinjam'  => 'required|date',
+            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+            'jumlah'          => 'required|integer|min:1',
         ]);
 
-        // upload foto jika ada
-        $namaFile = null;
-        if ($request->hasFile('foto')) {
-            $namaFile = $request->file('foto')->store('foto_barang', 'public');
+        // Ambil barang
+        $barang = Barang::findOrFail($request->barang_id);
+
+        // Cek stok cukup
+        if ($barang->stok < $request->jumlah) {
+            return back()->with('error', 'Stok tidak mencukupi.');
         }
 
-        Barang::create([
-            'kategori_barang'  => $request->kategori_barang,
-            'nama_barang'      => $request->nama_barang,
-            'deskripsi'        => $request->deskripsi,
-            'stok'             => $request->stok,
-            'harga_per_hari'   => $request->harga_per_hari,
-            'foto'             => $namaFile
+        // Buat data booking baru
+        Booking::create([
+            'barang_id'       => $barang->id,
+            'user_id'         => Auth::user(),
+            'tanggal_pinjam'  => $request->tanggal_pinjam,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'total_harga' => $barang->harga_per_hari * $request->jumlah, 
+            'status'          => 'pending',
         ]);
 
-        // langsung panggil ulang data setelah insert
-        $barangs = Barang::all();
+        $barang->decrement('stok', $request->jumlah);
 
-        return view('admin.barang.index', compact('barangs'))
-            ->with('success', 'Data berhasil ditambahkan.');
+        return redirect()->route('booking.index')->with('success', 'Booking berhasil! Stok berkurang otomatis.');
     }
+
+    public function cancel($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $barang = $booking->barang;
+
+        $barang->increment('stok', $booking->jumlah);
+
+        $booking->update(['status' => 'cancelled']);
+
+        return redirect()->back()->with('success', 'Booking dibatalkan dan stok dikembalikan.');
+    }
+
 
     public function edit(Barang $barang)
     {
@@ -77,15 +91,12 @@ class BarangController extends Controller
             'harga_per_hari'  => $request->harga_per_hari,
         ];
 
-        // upload foto jika ada
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('foto_barang', 'public');
         }
 
-        // update data
         $barang->update($data);
 
-        // arahkan kembali ke halaman index
         return redirect()->route('barang.index')->with('success', 'Data berhasil diperbarui.');
     }
 
@@ -95,6 +106,4 @@ class BarangController extends Controller
         return redirect()->route('barang.index')
                         ->with('success', 'Data berhasil dihapus.');
     }
-
-
 }
