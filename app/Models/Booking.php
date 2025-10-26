@@ -20,6 +20,7 @@ class Booking extends Model
         'nik',
         'alamat',
         'no_hp',
+        'status', 
     ];
 
     public function user()
@@ -31,10 +32,4 @@ class Booking extends Model
     {
         return $this->belongsTo(Barang::class);
     }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
-
 }

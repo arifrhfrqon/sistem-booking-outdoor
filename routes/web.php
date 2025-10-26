@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function(){
     Route::get('/kerusakan', [LaporanController::class, 'kerusakan'])->name('laporan.kerusakan');
     Route::put('/booking/{id}/konfirmasi', [LaporanController::class, 'konfirmasi'])
     ->name('booking.konfirmasi');
+    Route::get('/admin/live-search', [AdminController::class, 'liveSearch'])
+    ->name('admin.liveSearch');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -36,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/barang/{id}', [UserDashboardController::class, 'show'])->name('barang.show');
     Route::get('/my-booking', [UserDashboardController::class, 'myBooking'])->name('user.myBooking');
     Route::resource('booking', BookingController::class);
-    Route::get('/print-all', [BookingController::class, 'printAll'])->name('booking.printAll');
+    Route::get('/printAll', [BookingController::class, 'printAll'])->name('booking.printAll');
     Route::get('/about', function () {
         return view('user.about');
     });

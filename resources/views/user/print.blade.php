@@ -66,17 +66,19 @@
     <p class="right total">Total: Rp {{ number_format($grandTotal, 0, ',', '.') }}</p>
 
     <div class="status">
-        <p>Status Pembayaran: 
-            <strong style="color:{{ $status == 'Lunas' ? 'green' : 'red' }}">
-                {{ strtoupper($status) }}
-            </strong>
+        <p>Status Pembayaran:
+            @if($status == 'Lunas')
+                <span class="badge bg-success">LUNAS</span>
+            @else
+                <span class="badge bg-secondary">BELUM</span>
+            @endif
         </p>
     </div>
 
     <div class="line"></div>
 
     <div class="footer">
-        <p>Terima kasih 🙏</p>
+        <p>Terima kasih</p>
         <small>Barang yang dibooking harap diambil sesuai jadwal.</small>
     </div>
 </body>

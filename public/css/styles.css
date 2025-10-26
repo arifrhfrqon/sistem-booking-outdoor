@@ -10823,4 +10823,22 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+  #admin-search-results a {
+      display: block;
+      padding: 8px 12px;
+      color: #212529;
+      text-decoration: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+  }
+  #admin-search-results a:hover {
+      background-color: #f8f9fa;
+  }
+  mark {
+      background-color: #fff3cd;
+      padding: 0 2px;
+  }
+
+
 }

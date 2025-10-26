@@ -23,62 +23,81 @@ class BookingController extends Controller
         $barang = Barang::findOrFail($request->barang_id);
         $user   = Auth::user();
 
-        // hitung lama hari
+        if ($barang->stok < $request->jumlah) {
+            return redirect()->back()->with('error', 'Stok tidak mencukupi untuk jumlah yang dipesan.');
+        }
+
         $lamaHari = (new \DateTime($request->tanggal_pinjam))
             ->diff(new \DateTime($request->tanggal_kembali))
             ->days;
 
-        // hitung total harga
+        if ($lamaHari < 1) {
+            $lamaHari = 1;
+        }
+
         $total = $barang->harga_per_hari * $request->jumlah * $lamaHari;
 
-    Booking::create([
-        'user_id'        => $user->id,
-        'barang_id'      => $request->barang_id,
-        'tanggal_pinjam' => $request->tanggal_pinjam,
-        'tanggal_kembali'=> $request->tanggal_kembali,
-        'jumlah'         => $request->jumlah,
-        'total_harga'    => $total,
-        'nama'           => $user->nama_lengkap,  // ambil dari users
-        'nik'            => $user->nik,
-        'alamat'         => $user->alamat,
-        'no_hp'          => $user->no_hp,
-    ]);
+        Booking::create([
+            'user_id'        => $user->id,
+            'barang_id'      => $request->barang_id,
+            'tanggal_pinjam' => $request->tanggal_pinjam,
+            'tanggal_kembali'=> $request->tanggal_kembali,
+            'jumlah'         => $request->jumlah,
+            'total_harga'    => $total,
+            'nama'           => $user->nama_lengkap,
+            'nik'            => $user->nik,
+            'alamat'         => $user->alamat,
+            'no_hp'          => $user->no_hp,
+        ]);
 
-        return redirect()->back()->with('success', 'Booking berhasil! Silakan cek di menu Booking.');
+        $barang->decrement('stok', $request->jumlah);
+
+        return redirect()->back()->with('success', 'Booking berhasil! Stok otomatis berkurang.');
     }
 
     public function show($id)
     {
         $booking = Booking::with('barang')->findOrFail($id);
 
-        // --- Dummy QRIS String (biasanya dari API) ---
-        $qris_string = "00020101021126680016COM.QRIS.WWW01189360091100100205450230303UMI520454995303360540" . $booking->total_harga;
-
-        return view('user.show', compact('booking', 'qris_string'));
+        return view('user.show', compact('booking'));
     }
 
     public function printAll()
     {
-        $bookings = Booking::with('barang')->get();
+        $bookings = Booking::where('user_id', Auth::id())
+            ->with('barang')
+            ->get();
 
         if ($bookings->isEmpty()) {
-            return redirect()->back()->with('error', 'Tidak ada data booking untuk dicetak.');
+            return redirect()->back()->with('error', 'Tidak ada booking untuk dicetak.');
         }
 
-        $status = $bookings->last()->status_pembayaran ?? 'Belum Dibayar';
+        $pdf = Pdf::loadView('user.print', compact('bookings'))
+                ->setPaper([0, 0, 226.77, 600], 'portrait'); // 80mm roll paper
 
-        $pdf = Pdf::loadView('user.print', compact('bookings', 'status'))
-                  ->setPaper([0,0,226.77,600], 'portrait'); // 80mm struk
+        $filename = 'Struk_Booking_' . now()->format('Ymd_His') . '.pdf';
 
-        return $pdf->stream('struk-booking.pdf');
+        // Tampilkan di browser dulu
+        return $pdf->stream($filename);
     }
 
     public function destroy($id)
     {
         $booking = Booking::findOrFail($id);
+
+        if ($booking->user_id != Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak punya izin untuk membatalkan booking ini.');
+        }
+
+        $barang = Barang::find($booking->barang_id);
+        if ($barang) {
+            $barang->stok += $booking->jumlah; 
+            $barang->save();
+        }
+
         $booking->delete();
 
-        return redirect()->route('user.myBooking')->with('success', 'Data booking berhasil dihapus.');
+        return redirect()->back()->with('success', 'Booking berhasil dibatalkan, stok barang telah dikembalikan.');
     }
 
     public function edit($id)

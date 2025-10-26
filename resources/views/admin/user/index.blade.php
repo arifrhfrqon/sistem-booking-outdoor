@@ -8,41 +8,56 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <h4 class="mb-3">
+        Data User
+        @if(request('query'))
+            <small class="text-muted">— hasil untuk "{{ request('query') }}"</small>
+        @endif
+    </h4>
 
     <table class="table table-bordered">
         <thead class="table-primary text-center">
         <tr>
-            <th class="align-middle">No</th>
-            <th class="align-middle">Name</th>
-            <th class="align-middle">Email</th>
-            <th class="align-middle">Nama Lengkap</th>
-            <th class="align-middle">NIK</th>
-            <th class="align-middle">No HP</th>
-            <th class="align-middle">Pekerjaan</th>
-            <th class="align-middle">Foto KTP</th>
-            <th class="align-middle">Role</th>
-            <th class="align-middle">Aksi</th>
+            <th>No</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Nama Lengkap</th>
+            <th>NIK</th>
+            <th>No HP</th>
+            <th>Pekerjaan</th>
+            <th>Foto KTP</th>
+            <th>Role</th>
+            <th>Aksi</th>
         </tr>
         </thead>
         <tbody>
-        @foreach($users as $u)
+        @forelse($users as $u)
+            @php
+                $query = request('query');
+                function highlight($text, $query) {
+                    if(!$query) return e($text);
+                    return preg_replace("/(" . preg_quote($query, '/') . ")/i",
+                        '<mark style="background-color:#fff3cd;">$1</mark>',
+                        e($text));
+                }
+            @endphp
             <tr class="text-center">
-                <td class="align-middle">{{ $loop->iteration }}</td>
-                <td class="align-middle">{{ $u->name }}</td>
-                <td class="align-middle">{{ $u->email }}</td>
-                <td class="align-middle">{{ $u->nama_lengkap }}</td>
-                <td class="align-middle">{{ $u->nik }}</td>
-                <td class="align-middle">{{ $u->no_hp }}</td>
-                <td class="align-middle">{{ $u->pekerjaan }}</td>
-                <td class="align-middle">
+                <td>{{ $loop->iteration }}</td>
+                <td>{!! highlight($u->name, $query) !!}</td>
+                <td>{!! highlight($u->email, $query) !!}</td>
+                <td>{!! highlight($u->nama_lengkap, $query) !!}</td>
+                <td>{!! highlight($u->nik, $query) !!}</td>
+                <td>{!! highlight($u->no_hp, $query) !!}</td>
+                <td>{!! highlight($u->pekerjaan, $query) !!}</td>
+                <td>
                     @if($u->foto_ktp)
                         <img src="{{ asset('storage/'.$u->foto_ktp) }}" width="70" alt="Foto KTP">
                     @else
                         -
                     @endif
                 </td>
-                <td class="align-middle">{{ $u->role }}</td>
-                <td class="align-middle">
+                <td>{!! highlight($u->role, $query) !!}</td>
+                <td>
                     <a href="{{ route('users.edit', $u->id) }}" class="btn btn-sm btn-warning">Edit</a>
                     <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="d-inline">
                         @csrf @method('DELETE')
@@ -50,7 +65,11 @@
                     </form>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr>
+                <td colspan="10" class="text-center text-muted">Tidak ada data ditemukan.</td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

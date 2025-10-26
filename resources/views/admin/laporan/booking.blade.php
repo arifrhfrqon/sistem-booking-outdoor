@@ -3,7 +3,13 @@
 
 @section('content')
 <div class="container-fluid">
-    <h4 class="mb-3">Laporan Booking</h4>
+    <h4 class="mb-3">
+        Laporan Booking
+        @if(request('query'))
+            <small class="text-muted">— hasil untuk "{{ request('query') }}"</small>
+        @endif
+    </h4>
+
     <table class="table table-bordered table-striped">
         <thead class="table-success text-center">
             <tr>
@@ -23,30 +29,40 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($bookings as $i => $b)
+            @php
+                $query = request('query');
+                function highlight($text, $query) {
+                    if(!$query) return e($text);
+                    return preg_replace("/(" . preg_quote($query, '/') . ")/i",
+                        '<mark style="background-color:#fff3cd;">$1</mark>',
+                        e($text));
+                }
+            @endphp
+
+            @forelse($bookings as $i => $b)
                 <tr>
                     <td class="text-center">{{ $i+1 }}</td>
-                    <td>{{ $b->nama ?? $b->user->name }}</td>
-                    <td>{{ $b->nik ?? '-' }}</td>
-                    <td>{{ $b->alamat ?? '-' }}</td>
-                    <td>{{ $b->no_hp ?? '-' }}</td>
-                    <td>{{ $b->barang->nama_barang ?? '-' }}</td>
+                    <td>{!! highlight($b->nama ?? $b->user->name, $query) !!}</td>
+                    <td>{!! highlight($b->nik ?? '-', $query) !!}</td>
+                    <td>{!! highlight($b->alamat ?? '-', $query) !!}</td>
+                    <td>{!! highlight($b->no_hp ?? '-', $query) !!}</td>
+                    <td>{!! highlight($b->barang->nama_barang ?? '-', $query) !!}</td>
                     <td>{{ $b->tanggal_pinjam }}</td>
                     <td>{{ $b->tanggal_kembali }}</td>
                     <td class="text-center">{{ $b->jumlah }}</td>
                     <td>Rp {{ number_format($b->total_harga,0,',','.') }}</td>
                     <td class="text-center">
                         @if($b->status_pembayaran === 'Lunas')
-                        <span class="badge bg-success">Lunas</span>
+                            <span class="badge bg-success">Lunas</span>
                         @else
-                        <span class="badge bg-danger">Belum</span>
+                            <span class="badge bg-danger">Belum</span>
                         @endif
                     </td>
-                    <td>{{ $b->keterangan }}</td>
+                    <td>{!! highlight($b->keterangan, $query) !!}</td>
                     <td class="text-center">
                         @if($b->status_pembayaran !== 'Lunas')
-                            <!-- Trigger modal -->
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $b->id }}">
+                            <button type="button" class="btn btn-success btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $b->id }}">
                                 Konfirmasi
                             </button>
                         @else
@@ -55,8 +71,9 @@
                     </td>
                 </tr>
 
-                <!-- Modal Konfirmasi (letakkan di luar <tr>) -->
-                <div class="modal fade" id="konfirmasiModal{{ $b->id }}" tabindex="-1" aria-labelledby="konfirmasiLabel{{ $b->id }}" aria-hidden="true">
+                <!-- Modal Konfirmasi -->
+                <div class="modal fade" id="konfirmasiModal{{ $b->id }}" tabindex="-1"
+                     aria-labelledby="konfirmasiLabel{{ $b->id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form action="{{ route('booking.konfirmasi', $b->id) }}" method="POST">
@@ -64,14 +81,14 @@
                                 @method('PUT')
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="konfirmasiLabel{{ $b->id }}">Konfirmasi Pembayaran</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Apakah Anda yakin ingin mengkonfirmasi pembayaran ini sebagai <b>LUNAS</b>?</p>
-                                    
+                                    <p>Apakah Anda yakin ingin menandai pembayaran ini sebagai <b>LUNAS</b>?</p>
                                     <div class="mb-3">
                                         <label for="keterangan{{ $b->id }}" class="form-label">Keterangan (Opsional)</label>
-                                        <textarea name="keterangan" id="keterangan{{ $b->id }}" class="form-control" rows="3" placeholder="Contoh: Transfer BCA, sudah diterima oleh admin."></textarea>
+                                        <textarea name="keterangan" id="keterangan{{ $b->id }}" class="form-control" rows="3"
+                                                  placeholder="Contoh: Transfer BCA, sudah diterima oleh admin."></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -82,9 +99,14 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="13" class="text-center text-muted">Tidak ada data ditemukan.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
