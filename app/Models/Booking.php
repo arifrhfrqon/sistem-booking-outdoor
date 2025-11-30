@@ -14,13 +14,15 @@ class Booking extends Model
         'barang_id',
         'tanggal_pinjam',
         'tanggal_kembali',
+        'tanggal_pengembalian',
         'jumlah',
         'total_harga',
         'nama',
         'nik',
         'alamat',
         'no_hp',
-        'status', 
+        'status_denda', 
+        'denda',
     ];
 
     public function user()

@@ -159,7 +159,9 @@ class AdminController extends Controller
             })
             ->orWhereHas('barang', function ($b) use ($query) {
                 $b->where('nama_barang', 'like', "%{$query}%");
-            });
+            })
+            ->orWhere('tanggal_kembali', 'like', "%{$query}%") // 🔹 TAMBAHAN
+            ->orWhere('tanggal_pinjam', 'like', "%{$query}%");
         })
         ->get();
 

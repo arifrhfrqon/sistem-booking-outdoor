@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DendaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LaporanController;
@@ -24,11 +25,14 @@ Route::middleware('auth')->group(function(){
     Route::get('/admin', [AdminController::class, 'admin'])->name('admin.dashboard');
     Route::resource('barang', BarangController::class);
     Route::resource('users', AdminController::class);
+    Route::resource('denda', DendaController::class);
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::get('/laporanbooking', [LaporanController::class, 'booking'])->name('laporan.booking');
     Route::get('/kerusakan', [LaporanController::class, 'kerusakan'])->name('laporan.kerusakan');
     Route::put('/booking/{id}/konfirmasi', [LaporanController::class, 'konfirmasi'])
-    ->name('booking.konfirmasi');
+        ->name('booking.konfirmasi');
+    Route::put('/booking/{id}/kembalikan', [LaporanController::class, 'kembalikan'])
+        ->name('booking.konfirmasiDenda');
     Route::get('/admin/live-search', [AdminController::class, 'liveSearch'])
     ->name('admin.liveSearch');
 });

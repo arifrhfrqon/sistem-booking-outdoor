@@ -23,6 +23,7 @@
                 <th>Tanggal Kembali</th>
                 <th>Jumlah</th>
                 <th>Total Harga</th>
+                <th>Total Denda</th>
                 <th>Status Bayar</th>
                 <th>Keterangan</th>
                 <th>Aksi</th>
@@ -51,24 +52,58 @@
                     <td>{{ $b->tanggal_kembali }}</td>
                     <td class="text-center">{{ $b->jumlah }}</td>
                     <td>Rp {{ number_format($b->total_harga,0,',','.') }}</td>
+                    <td>
+                        @if($b->denda > 0)
+                            Rp {{ number_format($b->denda,0,',','.') }}
+
+                            @if($b->status_denda === 'Belum')
+                                <span class="badge bg-warning text-dark">Belum Dibayar</span>
+                            @else
+                                <span class="badge bg-success">Lunas</span>
+                            @endif
+                        @else
+                            -
+                        @endif
+                    </td>
+
                     <td class="text-center">
                         @if($b->status_pembayaran === 'Lunas')
                             <span class="badge bg-success">Lunas</span>
                         @else
-                            <span class="badge bg-danger">Belum</span>
+                            <span class="badge bg-danger">Belum Lunas</span>
                         @endif
                     </td>
-                    <td>{!! highlight($b->keterangan, $query) !!}</td>
+
+                    <td>{{ $b->keterangan ?? '-' }}</td>
+
                     <td class="text-center">
+
+                        {{-- Tombol Bayar Sewa --}}
                         @if($b->status_pembayaran !== 'Lunas')
-                            <button type="button" class="btn btn-success btn-sm"
+                            <button class="btn btn-success btn-sm"
                                 data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $b->id }}">
-                                Konfirmasi
+                                Bayar Sewa
                             </button>
-                        @else
-                            <span class="text-muted">-</span>
                         @endif
+
+                        {{-- Tombol Bayar Denda --}}
+                        @if($b->denda > 0 && $b->status_denda === 'Belum')
+                            <form action="{{ route('booking.konfirmasiDenda', $b->id) }}" method="POST" class="d-inline">
+                                @csrf @method('PUT')
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    Bayar Denda
+                                </button>
+                            </form>
+                        @endif
+
+                        {{-- Status selesai --}}
+                        @if($b->status_pembayaran == 'Lunas' && ($b->denda == 0 || $b->status_denda === 'Lunas'))
+                            <span class="badge bg-primary">Selesai</span>
+                        @endif
+
                     </td>
+
+
                 </tr>
 
                 <!-- Modal Konfirmasi -->
@@ -99,6 +134,53 @@
                         </div>
                     </div>
                 </div>
+                <!-- Modal Denda -->
+                <div class="modal fade" id="dendaModal{{ $b->id }}" tabindex="-1"
+                    aria-labelledby="dendaLabel{{ $b->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('denda.update', $b->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="dendaLabel{{ $b->id }}">Proses Denda</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p class="mb-2">
+                                        Jika denda ditambahkan, maka <b>total harga akan otomatis bertambah</b>
+                                        dan <b>Status Pembayaran berubah menjadi "Belum"</b> sampai semua biaya diselesaikan.
+                                    </p>
+
+                                    <div class="alert alert-info py-2">
+                                        Total harga saat ini: <b>Rp {{ number_format($b->total_harga, 0, ',', '.') }}</b>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Nominal Denda (Rp)</label>
+                                        <input type="number" class="form-control" name="denda" min="0"
+                                            value="{{ $b->denda ?? 0 }}" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Keterangan</label>
+                                        <textarea name="keterangan_denda" class="form-control"
+                                                placeholder="Contoh: Telat 2 hari atau kerusakan ringan"
+                                                rows="3"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-warning">Simpan Denda</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
             @empty
                 <tr>
                     <td colspan="13" class="text-center text-muted">Tidak ada data ditemukan.</td>

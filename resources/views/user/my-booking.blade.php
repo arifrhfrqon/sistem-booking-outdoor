@@ -24,6 +24,7 @@
                 <th>Total Harga</th>
                 <th>Aksi</th>
                 <th>Status Bayar</th>
+                <th>Status Denda</th>
             </tr>
         </thead>
         <tbody>
@@ -85,6 +86,13 @@
                             <span class="badge bg-success">LUNAS</span>
                         @else
                             <span class="badge bg-danger">BELUM</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if($booking->status_denda === 'Lunas')
+                            <span class="badge bg-success">LUNAS</span>
+                        @else
+                            <span class="badge bg-danger">TELAT</span>
                         @endif
                     </td>
                 </tr>

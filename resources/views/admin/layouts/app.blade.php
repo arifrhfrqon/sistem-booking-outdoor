@@ -50,6 +50,7 @@
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
                         style="position: relative;">
                         <div class="input-group">
+                            
                             <input type="text" id="admin-search-input"
                                 class="form-control bg-light border-0 small"
                                 placeholder="Cari di seluruh sistem..."
@@ -62,12 +63,13 @@
                             </div>
                         </div>
 
-                        <!-- hasil live search -->
                         <div id="admin-search-results"
                             class="bg-white border rounded shadow w-100"
-                            style="position: absolute; top: 100%; left: 0; z-index: 1050; display:none; max-height: 300px; overflow-y: auto;">
+                            style="position: absolute; top: 100%; left: 0; z-index: 1050;
+                                display:none; max-height: 300px; overflow-y: auto;">
                         </div>
                     </form>
+
 
                
                     <!-- Topbar Navbar -->
@@ -241,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             results.style.display = 'none';
         }
     });
+
 });
 </script>
 
