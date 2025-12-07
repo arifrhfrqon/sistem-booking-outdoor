@@ -76,6 +76,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Transaksi:</h6>
                         <a class="collapse-item" href="/laporanbooking">Laporan Booking</a>
+                        <a class="collapse-item" href="/laporan-sewa">Laporan Sewa</a>
                         <a class="collapse-item" href="/denda">Denda</a> 
                     </div>
                 </div>

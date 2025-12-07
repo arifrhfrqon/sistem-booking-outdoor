@@ -80,6 +80,12 @@
                             </div>
                           </div>
                         </div>
+                        {{-- Tombol Cetak PDF --}}
+                        <a href="{{ route('booking.pdf', $booking->id) }}" 
+                            class="btn btn-secondary btn-sm mt-1" 
+                            target="_blank">
+                                <i class="bi bi-printer"></i> PDF
+                        </a>
                     </td>
                     <td class="text-center">
                         @if($booking->status_pembayaran === 'Lunas')

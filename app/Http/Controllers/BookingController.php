@@ -134,6 +134,15 @@ class BookingController extends Controller
         return redirect()->route('user.myBooking')->with('success', 'Data booking berhasil diperbarui.');
     }
 
+    public function pdf($id)
+    {
+        $booking = Booking::with('barang', 'user')->findOrFail($id);
+
+        $pdf = Pdf::loadView('user.pdf', compact('booking'))
+                    ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('booking-'.$booking->id.'.pdf');
+    }
 
 
 }

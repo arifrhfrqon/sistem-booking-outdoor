@@ -22,9 +22,6 @@
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Kembali</th>
                 <th>Jumlah</th>
-                <th>Total Harga</th>
-                <th>Total Denda</th>
-                <th>Status Bayar</th>
                 <th>Keterangan</th>
                 <th>Aksi</th>
             </tr>
@@ -51,28 +48,6 @@
                     <td>{{ $b->tanggal_pinjam }}</td>
                     <td>{{ $b->tanggal_kembali }}</td>
                     <td class="text-center">{{ $b->jumlah }}</td>
-                    <td>Rp {{ number_format($b->total_harga,0,',','.') }}</td>
-                    <td>
-                        @if($b->denda > 0)
-                            Rp {{ number_format($b->denda,0,',','.') }}
-
-                            @if($b->status_denda === 'Belum')
-                                <span class="badge bg-warning text-dark">Belum Dibayar</span>
-                            @else
-                                <span class="badge bg-success">Lunas</span>
-                            @endif
-                        @else
-                            -
-                        @endif
-                    </td>
-
-                    <td class="text-center">
-                        @if($b->status_pembayaran === 'Lunas')
-                            <span class="badge bg-success">Lunas</span>
-                        @else
-                            <span class="badge bg-danger">Belum Lunas</span>
-                        @endif
-                    </td>
 
                     <td>{{ $b->keterangan ?? '-' }}</td>
 
@@ -84,16 +59,6 @@
                                 data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $b->id }}">
                                 Bayar Sewa
                             </button>
-                        @endif
-
-                        {{-- Tombol Bayar Denda --}}
-                        @if($b->denda > 0 && $b->status_denda === 'Belum')
-                            <form action="{{ route('booking.konfirmasiDenda', $b->id) }}" method="POST" class="d-inline">
-                                @csrf @method('PUT')
-                                <button type="submit" class="btn btn-warning btn-sm">
-                                    Bayar Denda
-                                </button>
-                            </form>
                         @endif
 
                         {{-- Status selesai --}}

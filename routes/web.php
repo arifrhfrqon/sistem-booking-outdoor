@@ -8,6 +8,7 @@ use App\Http\Controllers\DendaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\SewaController;
 use App\Http\Controllers\UserDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,13 @@ Route::middleware('auth')->group(function(){
         ->name('booking.konfirmasiDenda');
     Route::get('/admin/live-search', [AdminController::class, 'liveSearch'])
     ->name('admin.liveSearch');
+    Route::get('/laporan-sewa', [SewaController::class, 'index'])->name('sewa.index');
+    Route::get('/laporan-sewa/create', [SewaController::class, 'create'])->name('sewa.create');
+    Route::post('/laporan-sewa/store', [SewaController::class, 'store'])->name('sewa.store');
+    Route::get('/laporan-sewa/edit/{id}', [SewaController::class, 'edit'])->name('sewa.edit');
+    Route::put('/laporan-sewa/update/{id}', [SewaController::class, 'update'])->name('sewa.update');
+    Route::get('/laporan-sewa/delete/{id}', [SewaController::class, 'destroy'])->name('sewa.delete');
+    Route::get('/admin/laporan-sewa/get-booking/{id}', [SewaController::class, 'getBooking'])->name('sewa.getBooking');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -43,6 +51,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-booking', [UserDashboardController::class, 'myBooking'])->name('user.myBooking');
     Route::resource('booking', BookingController::class);
     Route::get('/printAll', [BookingController::class, 'printAll'])->name('booking.printAll');
+    Route::get('/booking/pdf/{id}', [BookingController::class, 'pdf'])
+    ->name('booking.pdf');
     Route::get('/about', function () {
         return view('user.about');
     });
